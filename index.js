@@ -1,73 +1,82 @@
+// Step 1: Simulate User Behavior
+// - Add event listeners for button clicks and form submissions.
+// - Use JavaScript to dynamically update the DOM based on user actions.
 
-export function addElementToDOM(containerId, content) {
-  const container = document.getElementById(containerId);
-  if (!container) return null;
-
-  const el = document.createElement("div");
-  el.textContent = content;
-  container.appendChild(el);
-  return el;
+function simulateClick(containerId, text) {
+  addElementToDOM(containerId, text);
 }
 
+function handleFormSubmit(formId, containerId) {
+  const input = document.getElementById("user-input");
+  const isValid = handleError(input.value);
 
-export function removeElementFromDOM(elementId) {
-  const element = document.getElementById(elementId);
-  if (!element) return false;
-  element.remove();
-  return true;
-}
-
-
-export function simulateClick(containerId, content) {
-  const container = document.getElementById(containerId);
-  if (!container) return null;
-
-  const button = document.createElement("button");
-  button.textContent = "Click Me";
-  button.addEventListener("click", () => {
-    container.textContent = content;
-  });
-
-  container.appendChild(button);
-
- 
-  button.click();
-
-  return button;
-}
-
-/
-export function handleFormSubmit(formId, targetId) {
-  const form = document.getElementById(formId);
-  const target = document.getElementById(targetId);
-  const errorMessage = document.getElementById("error-message");
-
-  if (!form || !target) return false;
-  
-  if (!errorMessage) {
-    
-    const fallback = document.createElement("div");
-    fallback.id = "error-message";
-    fallback.style.color = "red";
-    fallback.className = "hidden";
-    form.parentElement.insertBefore(fallback, form);
+  if (!isValid) {
+    return;
   }
 
-  const input = form.querySelector("input");
-  if (!input || !input.value.trim()) {
-    const em = document.getElementById("error-message");
-    if (em) {
-      em.textContent = "Input cannot be empty";
-      em.classList.remove("hidden");
-    }
+  addElementToDOM(containerId, input.value);
+  input.value = "";
+}
+
+// Step 2: DOM Manipulation Functions
+// - Implement functions to add, update, and remove DOM elements.
+// - Ensure all elements are dynamically created with appropriate attributes and content.
+
+function addElementToDOM(containerId, text) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  const newElement = createElement("div", {}, text);
+  container.appendChild(newElement);
+}
+
+function removeElementFromDOM(elementId) {
+  const element = document.getElementById(elementId);
+  if (element) {
+    element.remove();
+  }
+}
+
+function updateElementText(elementId, text) {
+  const element = document.getElementById(elementId);
+  if (element) {
+    element.textContent = text;
+  }
+}
+
+// Step 3: Error Handling
+// - Display error messages in the DOM for invalid inputs or missing elements.
+// - Create reusable functions to handle common error cases.
+
+function handleError(value) {
+  const errorMessage = document.getElementById("error-message");
+
+  if (!value || !value.trim()) {
+    errorMessage.textContent = "Input cannot be empty";
+    errorMessage.classList.remove("hidden");
     return false;
   }
 
-  target.textContent = input.value;
-  const em = document.getElementById("error-message");
-  if (em) {
-    em.textContent = "";
-    em.classList.add("hidden");
-  }
+  errorMessage.classList.add("hidden");
   return true;
 }
+
+// Step 4: Reusable Utilities
+// - Create modular utility functions, such as createElement(tag, attributes).
+// - Ensure all functions follow DRY principles for maintainability.
+
+function createElement(tag, attributes = {}, text = "") {
+  const element = document.createElement(tag);
+  Object.keys(attributes).forEach((key) => {
+    element.setAttribute(key, attributes[key]);
+  });
+  element.textContent = text;
+  return element;
+}
+
+module.exports = {
+  addElementToDOM,
+  removeElementFromDOM,
+  simulateClick,
+  handleFormSubmit,
+};
